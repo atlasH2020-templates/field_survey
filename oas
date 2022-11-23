@@ -1,0 +1,591 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "field_survey Service Template API",
+    "version": "0.0.1",
+    "description": "Template for services that provide close up measurements for parameters within zones of interest."
+  },
+  "externalDocs": {
+    "description": "Service Template Document",
+    "url": "https://htmlpreview.github.io/?https://github.com/atlasH2020-templates/field_survey/blob/wip0.0.1/doc.html"
+  },
+  "paths": {
+    "/survey": {
+      "post": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Plan a survey (plan_survey)",
+        "description": "Requests measurements to be performed at zone(s) of interest within a field.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SurveyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyResults"
+                },
+                "example": {
+                  "id": "some_unique_survey_id",
+                  "field_urn": "urn:com.agricircle.atlas.field_data:fdbe6f55-6179-4b88-9177-4afbed33adac",
+                  "status": "PLANNED"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailedError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No accessible sensors have ever been placed within the Boundary.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailedError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/survey/{id}": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Retrieve a survey's results (survey_results)",
+        "description": "If the service status indicates that it is completed, this endpoint will return the results requested in the planning of the survey.",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "the id of a planned survey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SurveyResults"
+                },
+                "example": {
+                  "id": "some_unique_survey_id",
+                  "field_urn": "urn:com.agricircle.atlas.field_data:fdbe6f55-6179-4b88-9177-4afbed33adac",
+                  "status": "COMPLETED",
+                  "results": {
+                    "date": "2021-10-31T15:32:00Z",
+                    "data": [
+                      [
+                        {
+                          "measurement": "SOIL__PH",
+                          "min": 5.1,
+                          "max": 6.3,
+                          "avg": 5.6,
+                          "values": [
+                            {
+                              "coordinates": [
+                                [],
+                                [],
+                                []
+                              ],
+                              "value": 5.1
+                            },
+                            {
+                              "coordinates": [
+                                [],
+                                [],
+                                []
+                              ],
+                              "value": 6.3
+                            },
+                            {
+                              "coordinates": [
+                                [],
+                                [],
+                                []
+                              ],
+                              "value": 5.4
+                            }
+                          ]
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid or missing parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailedError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No accessible sensors have ever been placed within the Boundary.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailedError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Delete a planned survey (delete_survey)",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "the id of a planned survey",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid or missing parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailedError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailedError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No accessible sensors have ever been placed within the Boundary.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailedError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/capabilities": {
+      "get": {
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Measurement types supported by the implementor",
+        "description": "Retrieves the list of measurement types supported by the implementor of this service. Request for measurements outside of the response list may generate an error or return no data.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MeasurementTypes"
+                  },
+                  "example": [
+                    "SOIL__PH"
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or missing credentials",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DetailedError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "SurveyRequest": {
+        "description": "Request body format for planning a new survey. Both nominal_point_density and nominal_point_spacing may not be requested in the same plan (will result in error). In none of the parameters are supplied, a single measurement will be taken per zone.",
+        "type": "object",
+        "required": [
+          "field_urn",
+          "zones",
+          "measurements"
+        ],
+        "properties": {
+          "field_urn": {
+            "$ref": "#/components/schemas/FieldURN"
+          },
+          "zones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Zone",
+              "minItems": 1
+            }
+          },
+          "measurements": {
+            "description": "The requested measurements.",
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "type"
+              ],
+              "properties": {
+                "type": {
+                  "$ref": "#/components/schemas/MeasurementTypes",
+                  "example": "SOIL_PH"
+                },
+                "aggregations": {
+                  "description": "Requested aggregations for a measurement type. If empty or omitted, only point_values will be returned.",
+                  "type": "array",
+                  "example": [
+                    "min",
+                    "avg"
+                  ],
+                  "items": {
+                    "$ref": "#/components/schemas/AggregationTypes"
+                  }
+                }
+              }
+            },
+            "minItems": 1
+          },
+          "nominal_point_density": {
+            "type": "number",
+            "description": "the number of point measurements within a zone."
+          },
+          "nominal_point_spacing": {
+            "type": "number",
+            "description": "distance between points (in meters) within path in the zone a zone."
+          }
+        },
+        "example": {
+          "field_urn": "urn:com.agricircle.atlas.field_data:fdbe6f55-6179-4b88-9177-4afbed33adac",
+          "zones": [
+            {
+              "type": "polygon",
+              "coordinates": [
+                [
+                  [],
+                  [],
+                  []
+                ]
+              ]
+            }
+          ],
+          "nominal_point_spacing": 14.14,
+          "measurements": [
+            {
+              "type": "SOIL__PH",
+              "aggregations": [
+                "min",
+                "max",
+                "avg",
+                "point_values"
+              ]
+            }
+          ]
+        }
+      },
+      "SurveyResults": {
+        "description": "Result of planned survey.",
+        "type": "object",
+        "required": [
+          "id",
+          "field_urn",
+          "status"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for a planned survey."
+          },
+          "field_urn": {
+            "$ref": "#/components/schemas/FieldURN"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PLANNED",
+              "COMPLETED",
+              "CANCELED"
+            ]
+          },
+          "results": {
+            "description": "Survey results, only available when the status is COMPLETED.",
+            "type": "object",
+            "required": [
+              "date",
+              "data"
+            ],
+            "properties": {
+              "date": {
+                "description": "Date-time on which the survey was performed in ISO8601 format",
+                "type": "string",
+                "format": "date-time"
+              },
+              "data": {
+                "description": "The requested measurements per zone (in the zone-order supplied during planning).",
+                "type": "array",
+                "items": {
+                  "required": [
+                    "measurement"
+                  ],
+                  "type": "object",
+                  "properties": {
+                    "measurement": {
+                      "$ref": "#/components/schemas/MeasurementTypes"
+                    },
+                    "min": {
+                      "type": "number"
+                    },
+                    "max": {
+                      "type": "number"
+                    },
+                    "avg": {
+                      "type": "number"
+                    },
+                    "point_values": {
+                      "minItems": 1,
+                      "description": "Point measurements within the zone.",
+                      "type": "array",
+                      "items": {
+                        "required": [
+                          "coordinates",
+                          "value"
+                        ],
+                        "type": "object",
+                        "properties": {
+                          "coordinates": {
+                            "description": "GPS coordinates of measurement location in format [lat, long, optional height]",
+                            "type": "array",
+                            "items": {
+                              "type": "number",
+                              "minItems": 2,
+                              "maxItems": 3
+                            }
+                          },
+                          "value": {
+                            "type": "number"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "minItems": 1
+              }
+            }
+          }
+        }
+      },
+      "FieldURN": {
+        "type": "string",
+        "pattern": "^urn:[a-z][a-z0-9_.\\-]*:[\\w-.]+",
+        "description": "Uniform resource name of a field with the syntax `urn:<service_id>:<internal_id>`. <service_id> must be the id of a valid and active ATLAS service"
+      },
+      "Zone": {
+        "description": "A geographical area expressed as a GeoJSON of type polygon (see https://json.schemastore.org/geojson.json) extended with an arbitrary identifier",
+        "type": "object",
+        "required": [
+          "type",
+          "coordinates"
+        ],
+        "properties": {
+          "type": {
+            "pattern": "^Polygon$",
+            "type": "string"
+          },
+          "coordinates": {
+            "description": "See https://json.schemastore.org/geojson.json"
+          }
+        },
+        "example": {
+          "type": "Polygon",
+          "coordinates": [
+            [
+              [
+                11.029761135578156,
+                49.57058013297548
+              ],
+              [
+                11.030300259590149,
+                49.57058013297548
+              ],
+              [
+                11.030300259590149,
+                49.57087931601995
+              ],
+              [
+                11.029761135578156,
+                49.57087931601995
+              ],
+              [
+                11.029761135578156,
+                49.57058013297548
+              ]
+            ]
+          ]
+        }
+      },
+      "MeasurementTypes": {
+        "type": "string",
+        "enum": [
+          "SOIL__VMC",
+          "SOIL__T",
+          "SOIL__WETNESS",
+          "SOIL__CLAY",
+          "SOIL__SILT",
+          "SOIL__SAND",
+          "SOIL__PH",
+          "SOIL__HUMUS",
+          "SOIL__PHOSPHOROUS",
+          "SOIL__POTASSIUM",
+          "SOIL__BORON",
+          "SOIL__CALCIUM",
+          "SOIL__COPPER",
+          "SOIL__MAGNESIUM",
+          "SOIL__MANGANESE",
+          "SOIL__NITROGEN",
+          "SOIL__SODIUM",
+          "SOIL__SULFUR",
+          "SOIL__ZINC",
+          "SOIL__N_MIN",
+          "SOIL__C_N_RATIO",
+          "SOIL__BULK_DENSITY"
+        ]
+      },
+      "AggregationTypes": {
+        "type": "string",
+        "enum": [
+          "point_values",
+          "min",
+          "max",
+          "avg",
+          "sum"
+        ]
+      },
+      "DetailedError": {
+        "type": "object",
+        "description": "This defines the structure of an error payload when one is present. Actual messages and additional error information content may change from one implementation to another",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "error description"
+          },
+          "status": {
+            "type": "integer",
+            "description": "http error code"
+          },
+          "error_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "A service's proprietary UI url where the user may navigate to view additional information or be prompted for additional actions to deal with the error. A well-behaved FMIS will present his users with a visual indication and the means to click on this link when this attribute is present."
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Additional detailed information"
+          }
+        },
+        "required": [
+          "message"
+        ],
+        "example": {
+          "message": "this is a sample error message",
+          "errors": [
+            "this is an example of additional error information"
+          ]
+        }
+      }
+    }
+  }
+}

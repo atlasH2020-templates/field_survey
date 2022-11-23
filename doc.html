@@ -1,0 +1,181 @@
+<html>
+<head>
+    <style type="text/css">
+        body { font-family: courier, courier new, monospace; font-size:12px; margin-left: 42px; width: 465px; white-space: pre-line; }
+        h2 { margin: 10px 0 0 -22px; font-size:12px; padding: 0 !important }
+        table { font-size: 10px; margin-left: -22px; width: 480px; }
+        div.header { padding: 0; margin: 0 0 0 -22px; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+ATLAS Service Template Specification
+Name                                                 field_survey
+Version                                                     0.0.1
+Author(s)        Giulio Reina (PoliBa), Annalisa Milella (PoliBa)
+                                 Mallku Caballero (AgriCircle AG)
+</div>
+
+<h2>The "field_survey" ATLAS Service Template</h2>
+<div style="margin-left: -22px;">
+Abstract
+
+This document describes the specifications for the field_survey service template whose purpose is to request on-site measurements in specified zones of a field.
+</div>
+<h2>1 Introduction</h2>
+
+Close up measurements can be of high value to obtain accurate date on zones of interest within a field.
+
+The field_survey service template is designed with the idea to provide discrete measurements at specified zones located within a field. When needed, the boundaries and other field information may be retrieved from a field_data service.
+
+<h2>2 Terminology</h2>
+
+The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as described in RFC 2119 and indicate requirement levels for compliant implementations.
+
+The notation "[xxx]" (xxx in square brackets) is equivalent to "array of xxx".
+
+When used alone, the term "field_survey" refers to "field_survey ATLAS Service Template". Instead, "field_survey service" is equivalent to "an ATLAS Service implementing the field_survey ATLAS Service Template".
+
+<h2>3 Pre-requisites</h2>
+
+A thorough understanding in the following is required for both service consumers or service provider implementors:
+<pre>
+    - GeoJSON specifications (<a href="https://geojson.org/">https://geojson.org/</a>)
+</pre>
+<h2>4 field_survey Usage Scenarios</h2>
+
+The following sections describe some aspects of the use of field_survey. The examples were chosen to illustrate the basic operation of applications using field_survey, not to limit what field_survey may be used for.
+
+<h2>4.1 Disease detection??</h2>
+
+TBD
+
+<h2>4.2 Soil sampling</h2>
+
+TBD
+
+<h2>5 Service Template Structure</h2>
+
+This section provides a very high-level summary of the field_data functions:
+<pre>
+    Plan survey
+    Get survey results
+    Delete survey
+    Capabilities
+</pre>
+Implementations of field_survey may require more parameters that are not included in the API. Such implementations MAY provide end-user configuration and management tools in a proprietary user interface.
+
+Within this section, operations are summarised with simple tables:
+<pre>
++--------------------------------------------+
+| logical operation name                     |
++-------------+------------------------------+
+|      Inputs | &lt;URL parameters or           |
+|             | request body attributes&gt;     |
++-------------+------------------------------+
+|     Outputs | &lt;body attributes&gt;            |
++-------------+------------------------------+
+</pre>
+Only the most meaningful parameters are discussed in this document. Please refer to the OpenAPI specifications for full details.
+
+field_survey services are not required to handle intense traffic from a single client, such as the one that may result from being directly invoked on user interface interactions in an FMIS, for instance. Implementors MAY generate a 429 TOO MANY REQUESTS error response if the rate of calls exceed some pre-defined quota.
+
+<h2>5.1 Plan Survey</h2>
+
+This endpoint is used to plan a new survey on a field.
+<pre>
++--------------------------------------------+
+| plan_survey                                |
++-------------+------------------------------+
+|      Inputs | field urn                    |
+|             | zones (areas of interest)    |
+|             | measurements                 |
+|             | point density or spacing     |
++-------------+------------------------------+
+|     Outputs | survey id                    |
++-------------+------------------------------+
+</pre>
+If the implementation does not require additional field information such as boundaries or crop, it is not required to pair to the field_urn's field data service and may skip validation on the existence of the field.
+
+<h2>5.2 Get Survey Results</h2>
+
+This endpoint is used to retrieve results for a previously planned survey.
+<pre>
++--------------------------------------------+
+| survey_results                             |
++-------------+------------------------------+
+|      Inputs | survey id                    |
++-------------+------------------------------+
+|     Outputs | status and optional results  |
++-------------+------------------------------+
+</pre>
+If the status is COMPLETED then the results of the survey, zone-by-zone will be returned.
+
+<h2>5.3 Delete Survey</h2>
+
+This endpoint is used to delete a survey and it's results.
+<pre>
++--------------------------------------------+
+| delete_survey                              |
++-------------+------------------------------+
+|      Inputs | survey id                    |
++-------------+------------------------------+
+|     Outputs | -                            |
++-------------+------------------------------+
+</pre>
+Note that a field_survey implementation is free to automatically archive or delete a survey and it's results after a certain amount of time.
+
+<h2>5.4 Capabilities</h2>
+
+This endpoint is used to return the measurement types an implementation/configuration is capable of returning when requesting a survey.
+<pre>
++--------------------------------------------+
+| capabilities                               |
++-------------+------------------------------+
+|      Inputs | field_urn                    |
++-------------+------------------------------+
+|     Outputs | -                            |
++-------------+------------------------------+
+</pre>
+The field_urn MAY be used to determine the general location where survey will be requested. For instance, this could be used by implementations to filter survey capabilities based on equipment (robots, drones, ...) and sensors that are available in the vicinity of the requested field.
+
+<h2>6 Access and Authentication</h2>
+
+Farmers MUST have an account setup on a field_survey service in order to authenticate and access API endpoints. The service implementor is responsible for the creation of accounts; it is not covered in the service template specifications.
+
+Unless specifically documented in the OpenAPI specifications, all API calls must include credentials in form of Bearer authentication (also called token authentication). Clients can obtain an access token on behalf of their user from the service's authorization server (see ATLAS service pairing).
+
+<h2>ANNEX 1 - field_survey Measurement Types</h2>
+
+The current list of standardized measurement parameters that may be returned by field_survey services is listed below. Newer versions of the field_survey template are likely to extend this list.
+<table>
+<tr><td>MEASUREMENT</td><td>UNIT</td><td>DESCRIPTION</td><td width="80">MANDATORY<br/>AGGREGATIONS</td></tr>
+<tr><td>SOIL__VMC</td><td>%</td><td>Soil volumetric moisture content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__T</td><td>&#8451;</td><td>Soil temperature</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__WETNESS</td><td>%</td><td>Soil wetness index (free water on soil surface)</td><td>min, max, avg</td></tr>
+
+<tr><td>SOIL__CLAY</td><td>%</td><td>Soil clay content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__SILT</td><td>%</td><td>Soil silt content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__SAND</td><td>%</td><td>Soil sand content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__HUMUS</td><td>%</td><td>Soil humus content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__NITROGEN</td><td>*</td><td>Soil total nitrogen content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__PH</td><td>pH-value</td><td>Soil pH level</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__PHOSPHOROUS</td><td>mg/100g</td><td>Soil phosphorous (P<sub>2</sub>O<sub>5</sub>) content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__POTASSIUM</td><td>mg/100g</td><td>Soil potassium (K<sub>2</sub>O) content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__BORON</td><td>mg/Kg</td><td>Soil boron (B) content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__CALCIUM</td><td>mg/Kg</td><td>Dried soil calcium (Ca) content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__COPPER</td><td>mg/Kg</td><td>Soil copper (Cu) content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__MAGNESIUM</td><td>mg/Kg</td><td>Soil magnesium (Mg) content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__MANGANESE</td><td>mg/Kg</td><td>Soil manganese (Mn) content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__SODIUM</td><td>mg/Kg</td><td>Soil sodium (Na) content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__SULFUR</td><td>mg/Kg</td><td>Soil sulfur (S) content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__ZINC</td><td>mg/Kg</td><td>Soil zinc (Zn) content</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__N_MIN</td><td>mg N/Kg</td><td>Nitrogen mineralization in soil</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__C_N_RATIO</td><td></td><td>Soil's Carbon-Nitrogen ratio</td><td>min, max, avg</td></tr>
+<tr><td>SOIL__BULK_DENSITY</td><td>g/cm<sup>3</sup></td><td>Soil's bulk density</td><td>min, max, avg</td></tr>
+</table>
+
+
+</body>
+</html>
