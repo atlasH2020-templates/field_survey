@@ -240,15 +240,26 @@
         }
       }
     },
-    "/capabilities": {
+    "/capabilities/{field_urn}": {
       "get": {
         "security": [
           {
             "bearerAuth": []
           }
         ],
-        "summary": "Measurement types supported by the implementor",
+        "summary": "Measurement types supported on or nearby a field (capabilities)",
         "description": "Retrieves the list of measurement types supported by the implementor of this service. Request for measurements outside of the response list may generate an error or return no data.",
+        "parameters": [
+          {
+            "name": "field_urn",
+            "description": "the urn of a field where surveys may be planned",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/FieldURN"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
