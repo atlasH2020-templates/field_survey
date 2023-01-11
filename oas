@@ -7,7 +7,7 @@
   },
   "externalDocs": {
     "description": "Service Template Document",
-    "url": "https://htmlpreview.github.io/?https://github.com/atlasH2020-templates/field_survey/blob/wip0.0.1/doc.html"
+    "url": "https://htmlpreview.github.io/?https://github.com/atlasH2020-templates/field_survey/blob/v0.0.1/doc.html"
   },
   "paths": {
     "/survey": {
