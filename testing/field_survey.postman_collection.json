@@ -1,0 +1,163 @@
+{
+	"info": {
+		"_postman_id": "a9f8d98a-68af-462e-bc99-7fc55a7b4a74",
+		"name": "ATLAS field_survey",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "capabilities",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{field_survey_url}}/capabilities/{{field_urn}}",
+					"host": [
+						"{{field_survey_url}}"
+					],
+					"path": [
+						"capabilities",
+						"{{field_urn}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "survey",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var res = JSON.parse(responseBody);",
+							"if (res?.id) {",
+							"  pm.collectionVariables.set(\"survey_id\", res.id);",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"field_urn\": {{field_urn}},\n    \"zones\": [\n        {\n            \"type\": \"Polygon\",\n            \"coordinated\": [\n                [\n                    []\n                ]\n            ]\n        }\n    ],\n    \"measurements\": [\n        {\n            \"type\": \"SOIL__PH\",\n            \"min\",\n            \"max\",\n            \"avg\",\n            \"point_values\"\n        ]\n    }\n],\n\"nominal_point_density\": 10\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{field_survey_url}}/survey",
+					"host": [
+						"{{field_survey_url}}"
+					],
+					"path": [
+						"survey"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get survey",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{field_survey_url}}/survey/{{survey_id}}",
+					"host": [
+						"{{field_survey_url}}"
+					],
+					"path": [
+						"survey",
+						"{{survey_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete survey",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{field_survey_url}}/survey/{{survey_id}}",
+					"host": [
+						"{{field_survey_url}}"
+					],
+					"path": [
+						"survey",
+						"{{survey_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{field_survey_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "survey_id",
+			"value": "",
+			"type": "default"
+		}
+	]
+}
