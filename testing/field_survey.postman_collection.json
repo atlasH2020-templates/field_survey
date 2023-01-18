@@ -7,6 +7,20 @@
 	"item": [
 		{
 			"name": "capabilities",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var res = JSON.parse(responseBody);",
+							"if (res?.length) {",
+							"  pm.collectionVariables.set(\"measurement_type\", res[0]);",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -45,7 +59,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"field_urn\": {{field_urn}},\n    \"zones\": [\n        {\n            \"type\": \"Polygon\",\n            \"coordinated\": [\n                [\n                    []\n                ]\n            ]\n        }\n    ],\n    \"measurements\": [\n        {\n            \"type\": \"SOIL__PH\",\n            \"min\",\n            \"max\",\n            \"avg\",\n            \"point_values\"\n        ]\n    }\n],\n\"nominal_point_density\": 10\n}",
+					"raw": "{\n    \"field_urn\": {{field_urn}},\n    \"zones\": [\n        {\n            \"type\": \"Polygon\",\n            \"coordinates\": [\n                [\n                    [\n                        8.473679000045,\n                        47.469674999955004\n                    ],\n                    [\n                        8.473679000045,\n                        47.469765000045\n                    ],\n                    [\n                        8.473588999955,\n                        47.469765000045\n                    ],\n                    [\n                        8.473588999955,\n                        47.469674999955004\n                    ],\n                    [\n                        8.473679000045,\n                        47.469674999955004\n                    ]\n                ]\n            ]\n        },\n        {\n            \"type\": \"Polygon\",\n            \"coordinates\": [\n                [\n                    [\n                        8.474052000044999,\n                        47.469425999955\n                    ],\n                    [\n                        8.474052000044999,\n                        47.469516000045\n                    ],\n                    [\n                        8.473961999955,\n                        47.469516000045\n                    ],\n                    [\n                        8.473961999955,\n                        47.469425999955\n                    ],\n                    [\n                        8.474052000044999,\n                        47.469425999955\n                    ]\n                ]\n            ]\n        }\n    ],\n    \"measurements\": [\n        {\n            \"type\": \"{{measurement_type}}\",\n            \"aggregations\": [\n                \"min\",\n                \"max\",\n                \"avg\",\n                \"point_values\"\n            ]\n        }\n    ],\n    \"nominal_point_density\": 10\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -156,6 +170,11 @@
 	"variable": [
 		{
 			"key": "survey_id",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "measurement_type",
 			"value": "",
 			"type": "default"
 		}
